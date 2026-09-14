@@ -33,3 +33,5 @@ git commit -m "Message" --> Allows you to add a message explaining what the git 
 # Intellij IDEA
 
 Has built in interfaces for GitHub on the left. 
+
+Alt+F8 --> Opens the evaluate tool, where you can type osmething liek original == equivalent. or original.equals(equivalent), which can help debug if the functions do what is intended.
