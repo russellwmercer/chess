@@ -48,3 +48,18 @@ Notice that it just returns a new PetRecord, since it is immutable and it cannot
 This would be called by, say, a var tucker = new PetRecord(1, Tucker, Dog) was created.
 To rename it would be tucker.rename(Brody)
 And it would create a new PetRecord with 
+
+# Collection
+It refers to simply an interface - it doesn't describe one specific data structrure. It describes a set of behaviors.
+It means we can add an item, remove an item, loop over everything.
+Many DIFFERENT concrete classes all agree to support collection:
+ArrayList, LinkedList, HashSet, and others.
+
+Arrays: Fixed size, decided at creation. Built into Java itself
+
+Collections: Can grow or shrink dynamically. Must be one thing - a ChessMove
+
+ArrayList and LinkedList are both TYPES of Collections. Collection is a category name. ("Vehicle" versus "car" and "motorcycle.")
+
+# IMPORTANT difference between == and .equals():
+The core rule: == compares what's in the variable. For primitives (int, double, boolean, char...), what's in the variable is the value itself. For everything else — every object, including String, ChessPosition, arrays, ChessMove — what's in the variable is a reference (a memory address, conceptually). So == on two objects asks "do these two variables point at the exact same object in memory?" — not "do they hold equivalent data?"

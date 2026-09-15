@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * Represents a single chess piece
@@ -50,11 +51,14 @@ public class ChessPiece {
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
      *
-     * @return Collection of valid moves
+     * @return Collection of valid moves - NOT an array, since it is not always a fixed length.
      */
+    //Generic syntax reminder: Collection<> -> the <> refers to what the collection holds.
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        return moves;
     }
+    //!!! NOT YET FINISHED - it needs to iterate through the moves, too.
 
     @Override
     public boolean equals(Object o) {
