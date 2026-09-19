@@ -58,21 +58,17 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         return switch (pieceType) {
-            case KING -> kingMoves(board, myPosition);
+            case KING -> jumpMoves(board, myPosition, new int[][] {{1,0},{0,1},{-1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}});
             case QUEEN -> moves; //queenMoves(board, myPosition);
             case BISHOP -> moves; //bishopMoves(board, myPosition);
-            case KNIGHT -> knightMoves(board, myPosition);
+            case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
             case ROOK -> moves; //rookMoves(board, myPosition);
             case PAWN -> moves; //pawnMoves(board, myPosition);
         };
     }
 
-    //Below this point are class specific chess moves: Kept private for encapsulation
-    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> jumpMoves(ChessBoard board, ChessPosition myPosition, int[][] offsets) {
         Collection<ChessMove> moves = new ArrayList<>();
-
-        //I was trying to make it work with a bunch of lists, but for the future with "jumping" pieces, this is the easiest way to arrange it.
-        int[][] offsets = {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}};
 
         for (int[] offset : offsets) {
             int newRow = myPosition.getRow() + offset[0];
@@ -87,31 +83,6 @@ public class ChessPiece {
 
             //I originally had inhabitant == null as the second choice - this was causing errors.
             //Null must be first, because otherwise you cannot call .getTeamColor() on it and it will fail to compile.
-            if (inhabitant == null) {
-                moves.add(new ChessMove(myPosition, possible_space, null));
-            } else if (inhabitant.getTeamColor() != pieceColor) {
-                moves.add(new ChessMove(myPosition, possible_space, null));
-            }
-        }
-        return moves;
-    }
-
-    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
-
-        int[][] offsets = {{1,0},{0,1},{-1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
-
-        for (int[] offset : offsets) {
-            int newRow = myPosition.getRow() + offset[0];
-            int newCol = myPosition.getColumn() + offset[1];
-
-            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
-                continue;
-            }
-
-            ChessPosition possible_space = new ChessPosition(newRow, newCol);
-            ChessPiece inhabitant = board.getPiece(possible_space);
-
             if (inhabitant == null) {
                 moves.add(new ChessMove(myPosition, possible_space, null));
             } else if (inhabitant.getTeamColor() != pieceColor) {
