@@ -45,7 +45,6 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return pieceType;
     }
-
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -54,12 +53,119 @@ public class ChessPiece {
      * @return Collection of valid moves - NOT an array, since it is not always a fixed length.
      */
     //Generic syntax reminder: Collection<> -> the <> refers to what the collection holds.
+    //To create a collection of valid moves, I created helper functions to aid with debugging.
+    //I could also create them as separate classes, that would be difficult in a timed environment with constructors, etc.
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        Collection<ChessMove> moves = new ArrayList<>();
+        return switch (pieceType) {
+            case KING -> kingMoves(board, myPosition);
+            case QUEEN -> moves; //queenMoves(board, myPosition);
+            case BISHOP -> moves; //bishopMoves(board, myPosition);
+            case KNIGHT -> knightMoves(board, myPosition);
+            case ROOK -> moves; //rookMoves(board, myPosition);
+            case PAWN -> moves; //pawnMoves(board, myPosition);
+        };
+    }
+
+    //Below this point are class specific chess moves: Kept private for encapsulation
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        //I was trying to make it work with a bunch of lists, but for the future with "jumping" pieces, this is the easiest way to arrange it.
+        int[][] offsets = {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}};
+
+        for (int[] offset : offsets) {
+            int newRow = myPosition.getRow() + offset[0];
+            int newCol = myPosition.getColumn() + offset[1];
+
+            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+                continue;
+            }
+
+            ChessPosition possible_space = new ChessPosition(newRow, newCol);
+            ChessPiece inhabitant = board.getPiece(possible_space);
+
+            //I originally had inhabitant == null as the second choice - this was causing errors.
+            //Null must be first, because otherwise you cannot call .getTeamColor() on it and it will fail to compile.
+            if (inhabitant == null) {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            } else if (inhabitant.getTeamColor() != pieceColor) {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            }
+        }
         return moves;
     }
-    //!!! NOT YET FINISHED - it needs to iterate through the moves, too.
 
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+
+        int[][] offsets = {{1,0},{0,1},{-1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
+
+        for (int[] offset : offsets) {
+            int newRow = myPosition.getRow() + offset[0];
+            int newCol = myPosition.getColumn() + offset[1];
+
+            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+                continue;
+            }
+
+            ChessPosition possible_space = new ChessPosition(newRow, newCol);
+            ChessPiece inhabitant = board.getPiece(possible_space);
+
+            if (inhabitant == null) {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            } else if (inhabitant.getTeamColor() != pieceColor) {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            }
+        }
+        return moves;
+    }
+
+//    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+//        Collection<ChessMove> moves = new ArrayList<>();
+//
+//        if (pieceColor == ChessGame.TeamColor.WHITE) {
+//            int[][] attack_offsets = {{1,-1}, {1,1}};
+//        } else {
+//            int[][] attack_offsets = {{-1,-1}, {-1,1}};
+//        }
+//
+//        for (int[] attack_offset : attack_offsets) {
+//            int newRow = myPosition.getRow() + attack_offset[0];
+//            int newCol = myPosition.getColumn() + attack_offset[1];
+//
+//            if (newCol < 1 | newCol > 8 | newRow < 1 | newRow > 8) {
+//                continue;
+//            }
+//
+//            ChessPosition possible_space = new ChessPosition(newRow, newCol);
+//            ChessPiece inhabitant = board.getPiece(possible_space);
+//            if (inhabitant == null) {continue;}
+//            else if (inhabitant.getTeamColor() != pieceColor && newRow == 8) {
+//                moves.add(new ChessMove(myPosition, possible_space, null));
+//            }
+//            else if (inhabitant.getTeamColor() != pieceColor) {
+//                moves.add(new ChessMove(myPosition, possible_space, null));
+//            }
+//        }
+//
+//        int advanceOneRow = myPosition.getRow() + 1;
+//
+//        if (advanceOneRow > 8) {
+//            return moves;
+//        } else {
+//            ChessPosition possible_space = new ChessPosition(advanceOneRow, myPosition.getColumn());
+//            ChessPiece inhabitant = board.getPiece(possible_space);
+//            if (inhabitant == null && advanceOneRow == 8) {
+//                moves.add(new ChessMove(myPosition, possible_space, null));
+//            } else if (inhabitant == null) {
+//                moves.add(new ChessMove(myPosition, possible_space, null));
+//            }
+//            return moves;
+//        }
+//    }
+
+    //Below this point are overrides and helper functions for debugging.
     @Override
     public boolean equals(Object o) {
         if (this == o) {return true;}
