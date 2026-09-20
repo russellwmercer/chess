@@ -60,7 +60,7 @@ public class ChessPiece {
         return switch (pieceType) {
             case KING -> jumpMoves(board, myPosition, new int[][] {{1,0},{0,1},{-1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}});
             case QUEEN -> moves; //queenMoves(board, myPosition);
-            case BISHOP -> moves; //bishopMoves(board, myPosition);
+            case BISHOP -> diagonalIterator(board, myPosition);
             case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
             case ROOK -> moves; //rookMoves(board, myPosition);
             case PAWN -> pawnMoves(board, myPosition);
@@ -92,6 +92,35 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> diagonalIterator(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int[][] offsets = {{-1,-1}, {1,1}, {-1, 1}, {1, -1}};
+
+        for (int[] offset : offsets) {
+            for (int i = 1; i < 8; i++) {
+                int newRow = myPosition.getRow() + (i*offset[0]);
+                int newCol = myPosition.getColumn() + (i*offset[1]);
+
+                if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {break;}
+
+                ChessPosition possible_space = new ChessPosition(newRow, newCol);
+                ChessPiece inhabitant = board.getPiece(possible_space);
+
+                if (inhabitant == null) {
+                    moves.add(new ChessMove(myPosition, possible_space, null));
+                    continue;
+                }
+                if (inhabitant.getTeamColor() != pieceColor) {
+                    moves.add(new ChessMove(myPosition, possible_space, null));
+                    break;
+                }
+                if (inhabitant.getTeamColor() == pieceColor) {
+                    break;
+                }
+            }
+        }
+        return moves;
+    }
 
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         int startRow;
