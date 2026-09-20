@@ -56,13 +56,12 @@ public class ChessPiece {
     //To create a collection of valid moves, I created helper functions to aid with debugging.
     //I could also create them as separate classes, that would be difficult in a timed environment with constructors, etc.
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
         return switch (pieceType) {
-            case KING -> jumpMoves(board, myPosition, new int[][] {{1,0},{0,1},{-1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}});
-            case QUEEN -> moves; //queenMoves(board, myPosition);
-            case BISHOP -> diagonalIterator(board, myPosition);
+            case KING -> jumpMoves(board, myPosition, new int[][] {{1,0}, {0,1}, {-1,0}, {0,-1}, {-1,1}, {1,1}, {-1,-1}, {1,-1}});
+            case QUEEN -> directionalMovement(board, myPosition, new int[][] {{-1,-1}, {1,1}, {-1,1}, {1,-1}, {-1,0}, {1,0}, {0,1}, {0,-1}});
+            case BISHOP -> directionalMovement(board, myPosition, new int[][] {{-1,-1}, {1,1}, {-1,1}, {1,-1}});
             case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
-            case ROOK -> moves; //rookMoves(board, myPosition);
+            case ROOK -> directionalMovement(board, myPosition, new int[][] {{-1,0}, {1,0}, {0,1}, {0,-1}});
             case PAWN -> pawnMoves(board, myPosition);
         };
     }
@@ -92,10 +91,8 @@ public class ChessPiece {
         return moves;
     }
 
-    private Collection<ChessMove> diagonalIterator(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> moves = new ArrayList<>();
-        int[][] offsets = {{-1,-1}, {1,1}, {-1, 1}, {1, -1}};
-
+    private Collection<ChessMove> directionalMovement(ChessBoard board, ChessPosition myPosition, int[][] offsets) {
+        Collection <ChessMove> moves = new ArrayList<>();
         for (int[] offset : offsets) {
             for (int i = 1; i < 8; i++) {
                 int newRow = myPosition.getRow() + (i*offset[0]);
