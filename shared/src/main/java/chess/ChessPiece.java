@@ -63,7 +63,7 @@ public class ChessPiece {
             case BISHOP -> moves; //bishopMoves(board, myPosition);
             case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
             case ROOK -> moves; //rookMoves(board, myPosition);
-            case PAWN -> moves; //pawnMoves(board, myPosition);
+            case PAWN -> pawnMoves(board, myPosition);
         };
     }
 
@@ -82,7 +82,7 @@ public class ChessPiece {
             ChessPiece inhabitant = board.getPiece(possible_space);
 
             //I originally had inhabitant == null as the second choice - this was causing errors.
-            //Null must be first, because otherwise you cannot call .getTeamColor() on it and it will fail to compile.
+            //Null must be first, because otherwise you cannot call .getTeamColor() on it, and it will fail to compile.
             if (inhabitant == null) {
                 moves.add(new ChessMove(myPosition, possible_space, null));
             } else if (inhabitant.getTeamColor() != pieceColor) {
@@ -92,49 +92,93 @@ public class ChessPiece {
         return moves;
     }
 
-//    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
-//        Collection<ChessMove> moves = new ArrayList<>();
-//
-//        if (pieceColor == ChessGame.TeamColor.WHITE) {
-//            int[][] attack_offsets = {{1,-1}, {1,1}};
-//        } else {
-//            int[][] attack_offsets = {{-1,-1}, {-1,1}};
-//        }
-//
-//        for (int[] attack_offset : attack_offsets) {
-//            int newRow = myPosition.getRow() + attack_offset[0];
-//            int newCol = myPosition.getColumn() + attack_offset[1];
-//
-//            if (newCol < 1 | newCol > 8 | newRow < 1 | newRow > 8) {
-//                continue;
-//            }
-//
-//            ChessPosition possible_space = new ChessPosition(newRow, newCol);
-//            ChessPiece inhabitant = board.getPiece(possible_space);
-//            if (inhabitant == null) {continue;}
-//            else if (inhabitant.getTeamColor() != pieceColor && newRow == 8) {
-//                moves.add(new ChessMove(myPosition, possible_space, null));
-//            }
-//            else if (inhabitant.getTeamColor() != pieceColor) {
-//                moves.add(new ChessMove(myPosition, possible_space, null));
-//            }
-//        }
-//
-//        int advanceOneRow = myPosition.getRow() + 1;
-//
-//        if (advanceOneRow > 8) {
-//            return moves;
-//        } else {
-//            ChessPosition possible_space = new ChessPosition(advanceOneRow, myPosition.getColumn());
-//            ChessPiece inhabitant = board.getPiece(possible_space);
-//            if (inhabitant == null && advanceOneRow == 8) {
-//                moves.add(new ChessMove(myPosition, possible_space, null));
-//            } else if (inhabitant == null) {
-//                moves.add(new ChessMove(myPosition, possible_space, null));
-//            }
-//            return moves;
-//        }
-//    }
+
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        int startRow;
+        int endRow;
+        int[][] normal_offsets;
+        int[][] double_offsets;
+        int[][] attack_offsets;
+
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            startRow = 7;
+            endRow = 1;
+            normal_offsets = new int[][] {{-1,0}};
+            double_offsets = new int[][] {{-1, 0}, {-2, 0}};
+            attack_offsets = new int[][] {{-1, -1}, {-1, 1}};
+        } else {
+            startRow = 2;
+            endRow = 8;
+            normal_offsets = new int[][] {{1,0}};
+            double_offsets = new int[][] {{1, 0}, {2, 0}};
+            attack_offsets = new int[][] {{1, -1}, {1, 1}};
+        }
+
+        if (startRow == myPosition.getRow()) {
+            return pawnIterator(board, myPosition, double_offsets, attack_offsets, endRow);
+        } else {
+            return pawnIterator(board, myPosition, normal_offsets, attack_offsets, endRow);
+        }
+    }
+
+    private Collection<ChessMove> pawnIterator(ChessBoard board, ChessPosition myPosition, int[][] offsets, int[][] attack_offsets, int endRow) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int newRow;
+        int newCol;
+
+        for (int[] offset : offsets) {
+            newRow = myPosition.getRow() + offset[0];
+            newCol = myPosition.getColumn() + offset[1];
+
+            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+                continue;
+            }
+
+            ChessPosition possible_space = new ChessPosition(newRow, newCol);
+            ChessPiece inhabitant = board.getPiece(possible_space);
+
+
+            if (inhabitant != null) {
+                break;
+            } else if (newRow == endRow) {
+                for (ChessPiece.PieceType p : ChessPiece.PieceType.values()) {
+                    if (p == ChessPiece.PieceType.KING | p == ChessPiece.PieceType.PAWN) {
+                        continue;
+                    }
+                    moves.add(new ChessMove(myPosition, possible_space, p));
+                }
+            } else {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            }
+        }
+
+        for (int[] attack_offset : attack_offsets) {
+            newRow = myPosition.getRow() + attack_offset[0];
+            newCol = myPosition.getColumn() + attack_offset[1];
+
+            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+                continue;
+            }
+
+            ChessPosition possible_space = new ChessPosition (newRow, newCol);
+            ChessPiece inhabitant = board.getPiece(possible_space);
+
+            if (inhabitant == null) {continue;}
+            if (inhabitant.getTeamColor() != pieceColor && newRow == endRow) {
+                for (ChessPiece.PieceType p : ChessPiece.PieceType.values()) {
+                    if (p == ChessPiece.PieceType.KING | p == ChessPiece.PieceType.PAWN) {
+                        continue;
+                    }
+                    moves.add(new ChessMove(myPosition, possible_space, p));
+                }
+            } else if (inhabitant.getTeamColor() != pieceColor) {
+                moves.add(new ChessMove(myPosition, possible_space, null));
+            }
+
+        }
+
+        return moves;
+    }
 
     //Below this point are overrides and helper functions for debugging.
     @Override
