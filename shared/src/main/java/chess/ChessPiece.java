@@ -62,7 +62,7 @@ public class ChessPiece {
             case BISHOP -> directionalMovement(board, myPosition, new int[][] {{-1,-1}, {1,1}, {-1,1}, {1,-1}});
             case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
             case ROOK -> directionalMovement(board, myPosition, new int[][] {{-1,0}, {1,0}, {0,1}, {0,-1}});
-            case PAWN -> pawnMoves(board, myPosition);
+            case PAWN -> pawn(board, myPosition);
         };
     }
 
@@ -119,7 +119,7 @@ public class ChessPiece {
         return moves;
     }
 
-    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> pawn(ChessBoard board, ChessPosition myPosition) {
         int startRow;
         int endRow;
         int[][] normal_offsets;
@@ -141,13 +141,13 @@ public class ChessPiece {
         }
 
         if (startRow == myPosition.getRow()) {
-            return pawnIterator(board, myPosition, double_offsets, attack_offsets, endRow);
+            return pawnMovements(board, myPosition, double_offsets, attack_offsets, endRow);
         } else {
-            return pawnIterator(board, myPosition, normal_offsets, attack_offsets, endRow);
+            return pawnMovements(board, myPosition, normal_offsets, attack_offsets, endRow);
         }
     }
 
-    private Collection<ChessMove> pawnIterator(ChessBoard board, ChessPosition myPosition, int[][] offsets, int[][] attack_offsets, int endRow) {
+    private Collection<ChessMove> pawnMovements(ChessBoard board, ChessPosition myPosition, int[][] offsets, int[][] attack_offsets, int endRow) {
         Collection<ChessMove> moves = new ArrayList<>();
         int newRow;
         int newCol;
