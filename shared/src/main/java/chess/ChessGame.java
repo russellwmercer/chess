@@ -60,10 +60,9 @@ public class ChessGame {
         Collection<ChessMove> moves = pieceOfInterest.pieceMoves(board, startPosition);
         for (ChessMove move : moves) {
             ChessBoard hypotheticalBoard = applyMoves(board, move);
-            if (isInCheckHelper(hypotheticalBoard, pieceOfInterest.getTeamColor())) {
-                continue;
+            if (!isInCheckHelper(hypotheticalBoard, pieceOfInterest.getTeamColor())) {
+                validMoves.add(move);
             }
-            validMoves.add(move);
         }
         return validMoves;
     }
@@ -92,7 +91,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if (board.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException(move + "- There is no piece at the start position.");
+        } else if (board.getPiece(move.getStartPosition()).getTeamColor() != teamTurn) {
+            throw new InvalidMoveException(move + "- The wrong team is trying to move.");
+        } else if (validMoves == null  || !validMoves.contains(move)) {
+            throw new InvalidMoveException(move + "is not in the list of valid moves.");
+        } else {
+            teamTurn = (teamTurn == TeamColor.BLACK) ? TeamColor.WHITE : TeamColor.BLACK;
+            board = applyMoves(board, move);
+        }
     }
 
     /**
