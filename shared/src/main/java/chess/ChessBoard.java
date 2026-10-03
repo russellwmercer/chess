@@ -106,6 +106,16 @@ public class ChessBoard {
         return sb.toString();
     }
 
+    // Creates a copy ChessBoard. ChessGame uses this.
+    public ChessBoard copy() {
+        ChessBoard copied = new ChessBoard();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                copied.squares[i][j] = this.squares[i][j];
+            }
+        }
+        return copied;
+    }
     /**
      *
      * @param o - another chess board to compare.
@@ -129,4 +139,5 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(this.squares);
     }
+
 }
