@@ -13,11 +13,13 @@ import java.util.ArrayList;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
+    private ChessMove previousMove;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         teamTurn = TeamColor.WHITE;
+        previousMove = null;
     }
 
     /**
@@ -58,6 +60,12 @@ public class ChessGame {
             return null;
         }
         Collection<ChessMove> moves = pieceOfInterest.pieceMoves(board, startPosition);
+        if (pieceOfInterest.getPieceType() == ChessPiece.PieceType.PAWN) {
+            ChessMove enpassantMove = enpassant(startPosition, pieceOfInterest);
+            if (enpassantMove != null) {
+                moves.add(enpassantMove);
+            }
+        }
         for (ChessMove move : moves) {
             ChessBoard hypotheticalBoard = applyMoves(board, move);
             if (!isInCheckHelper(hypotheticalBoard, pieceOfInterest.getTeamColor())) {
@@ -65,6 +73,29 @@ public class ChessGame {
             }
         }
         return validMoves;
+    }
+
+    // Helper function that creates a move for the pawn if it can enpassant.
+    private ChessMove enpassant(ChessPosition startPosition, ChessPiece attackingPawn) {
+        if (previousMove == null) {return null;}
+
+        ChessPiece lastMover = board.getPiece(previousMove.getEndPosition());
+        if (lastMover == null) {return null;}
+        if (lastMover.getPieceType() != ChessPiece.PieceType.PAWN) {return null;}
+        if (lastMover.getTeamColor() == attackingPawn.getTeamColor()) {return null;}
+
+        int rowsMoved = Math.abs(previousMove.getEndPosition().getRow() - previousMove.getStartPosition().getRow());
+        if (rowsMoved != 2) {
+            return null;
+        }
+        int columnDifference = Math.abs(previousMove.getEndPosition().getColumn() - startPosition.getColumn());
+        int rowDifference = Math.abs(previousMove.getEndPosition().getRow() - startPosition.getRow());
+        if (rowDifference != 0 || columnDifference != 1) {
+            return null;
+        }
+        int enpassantEndRow = ((previousMove.getStartPosition().getRow() + previousMove.getEndPosition().getRow()) / 2);
+        ChessMove enpassantMove = new ChessMove(startPosition, new ChessPosition(enpassantEndRow, previousMove.getEndPosition().getColumn()), null);
+        return enpassantMove;
     }
 
     //Helper function that returns a board of the move done.
@@ -92,15 +123,24 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
-        if (board.getPiece(move.getStartPosition()) == null) {
+        ChessPiece movingPiece = board.getPiece(move.getStartPosition());
+        if (movingPiece == null) {
             throw new InvalidMoveException(move + "- There is no piece at the start position.");
-        } else if (board.getPiece(move.getStartPosition()).getTeamColor() != teamTurn) {
+        } else if (movingPiece.getTeamColor() != teamTurn) {
             throw new InvalidMoveException(move + "- The wrong team is trying to move.");
         } else if (validMoves == null  || !validMoves.contains(move)) {
             throw new InvalidMoveException(move + "is not in the list of valid moves.");
         } else {
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN && board.getPiece(move.getEndPosition()) == null && move.getEndPosition().getColumn() != move.getStartPosition().getColumn()) {
+                if (movingPiece.getTeamColor() == TeamColor.WHITE) {
+                    board.addPiece(new ChessPosition(move.getEndPosition().getRow()-1, move.getEndPosition().getColumn()),null);
+                } else {
+                    board.addPiece(new ChessPosition(move.getEndPosition().getRow()+1, move.getEndPosition().getColumn()),null);
+                }
+            }
             teamTurn = (teamTurn == TeamColor.BLACK) ? TeamColor.WHITE : TeamColor.BLACK;
             board = applyMoves(board, move);
+            previousMove = move;
         }
     }
 
@@ -196,6 +236,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
+        previousMove = null;
         this.board = board.copy();
     }
     /**
