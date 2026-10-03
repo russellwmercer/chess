@@ -71,9 +71,24 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = findPiece(board, ChessPiece.PieceType.KING, teamColor);
+        if (kingPosition == null) {return false;}
+
+        return
     }
 
+    private ChessPosition findPiece(ChessBoard board, ChessPiece.PieceType piece, TeamColor teamColor) {
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition possiblePosition = new ChessPosition(i, j);
+                ChessPiece inhabitant = board.getPiece(possiblePosition);
+                if (inhabitant != null && inhabitant.getPieceType() == piece && inhabitant.getTeamColor() == teamColor) {
+                    return possiblePosition;
+                }
+            }
+        }
+        return null; //No king found on the board - helped for Edge Cases.
+    }
     /**
      * Determines if the given team is in checkmate
      *
