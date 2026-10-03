@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -73,8 +74,13 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findPiece(board, ChessPiece.PieceType.KING, teamColor);
         if (kingPosition == null) {return false;}
-
-        return
+        Collection<ChessMove> opponentMoves = allOpponentMoves(board, teamColor);
+        for (ChessMove opponentMove : opponentMoves) {
+            if (opponentMove.getEndPosition().equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private ChessPosition findPiece(ChessBoard board, ChessPiece.PieceType piece, TeamColor teamColor) {
@@ -88,6 +94,21 @@ public class ChessGame {
             }
         }
         return null; //No king found on the board - helped for Edge Cases.
+    }
+
+    // Pass IN the TEAM color - it finds opponent moves.
+    private Collection<ChessMove> allOpponentMoves(ChessBoard board, TeamColor teamColor) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i,j);
+                ChessPiece inhabitant = board.getPiece(position);
+                if (inhabitant != null && inhabitant.getTeamColor() != teamColor) {
+                    allMoves.addAll(inhabitant.pieceMoves(board,position));
+                }
+            }
+        }
+        return allMoves;
     }
     /**
      * Determines if the given team is in checkmate
