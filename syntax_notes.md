@@ -63,3 +63,14 @@ ArrayList and LinkedList are both TYPES of Collections. Collection is a category
 
 # IMPORTANT difference between == and .equals():
 The core rule: == compares what's in the variable. For primitives (int, double, boolean, char...), what's in the variable is the value itself. For everything else — every object, including String, ChessPosition, arrays, ChessMove — what's in the variable is a reference (a memory address, conceptually). So == on two objects asks "do these two variables point at the exact same object in memory?" — not "do they hold equivalent data?"
+
+# Inheritance vs Interface
+Inheritance refers to "extend"ing a previous class. I.e. Dog and cat both extend an animal.
+Whereas an interface is a required contract of what the classes need to provide. It is helpful beacuse
+you can pass in multiple objects to the same method. This works much better for polymorphism.
+
+# Deep vs Shallow Copies
+Copying in java is different because it creates a new pointer to the same underlying object. Therefore, we must be careful:
+Shallow copy - perfectly acceptable when the original object is immutable.
+Shallow copy - means that it creates a new pointer for each method but points to the same underlying object
+Deep copy - creates a completely new and stand alone object. Required for mutable fields. 
