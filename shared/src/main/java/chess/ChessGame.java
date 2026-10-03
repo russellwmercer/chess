@@ -72,6 +72,11 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        return isInCheckHelper(board, teamColor);
+    }
+
+    //Created this because I cannot refactor or change teh parameters passed into isInCheck.
+    private boolean isInCheckHelper(ChessBoard board, TeamColor teamColor) {
         ChessPosition kingPosition = findPiece(board, ChessPiece.PieceType.KING, teamColor);
         if (kingPosition == null) {return false;}
         Collection<ChessMove> opponentMoves = allOpponentMoves(board, teamColor);
