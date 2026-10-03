@@ -161,9 +161,24 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return (!booleanValidMovesHelper(teamColor) && isInCheck(teamColor));
     }
 
+    // Pass IN the TEAM color - it finds if there are valid moves that can be done.
+    private boolean booleanValidMovesHelper(TeamColor teamColor) {
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece inhabitant = board.getPiece(position);
+                if (inhabitant != null && inhabitant.getTeamColor() == teamColor) {
+                    if (!validMoves(position).isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves while not in check.
@@ -172,7 +187,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return (!booleanValidMovesHelper(teamColor) && !isInCheck(teamColor));
     }
 
     /**
