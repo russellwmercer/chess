@@ -214,7 +214,23 @@ public class ChessGame {
                     board.addPiece(new ChessPosition(move.getEndPosition().getRow()+1, move.getEndPosition().getColumn()),null);
                 }
             }
-            // Logic for castling. - Keeping track on if any of these have moved.
+            //Logic for updating the board after a castle.
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(move.getEndPosition().getColumn() - move.getStartPosition().getColumn()) == 2) {
+                int homeRow = (movingPiece.getTeamColor() == TeamColor.WHITE) ? 1 : 8;
+                // Kingside castle
+                if (move.getEndPosition().getColumn() == 7) {
+                    board.addPiece(new ChessPosition(homeRow, 6), new ChessPiece(movingPiece.getTeamColor(), ChessPiece.PieceType.ROOK));
+                    board.addPiece(new ChessPosition(homeRow, 8), null);
+                }
+                // Queensdie castle
+                if (move.getEndPosition().getColumn() == 3) {
+                    board.addPiece(new ChessPosition(homeRow, 4), new ChessPiece(movingPiece.getTeamColor(), ChessPiece.PieceType.ROOK));
+                    board.addPiece(new ChessPosition(homeRow, 1), null);
+                }
+            }
+
+
+            // Logic for updating castling history. - Keeping track on if any of these have moved.
             if (touches(move, 1, 5)) {whiteKingMove = true;}
             if (touches(move, 1, 8)) {whiteKingsideRookMove = true;}
             if (touches(move, 1, 1)) {whiteQueensideRookMove = true;}
