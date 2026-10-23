@@ -62,7 +62,7 @@ public class ChessPiece {
             case BISHOP -> directionalMovement(board, myPosition, new int[][] {{-1,-1}, {1,1}, {-1,1}, {1,-1}});
             case KNIGHT -> jumpMoves(board, myPosition, new int[][] {{2,1}, {2,-1}, {-2,1}, {-2,-1}, {1,-2}, {1,2}, {-1,-2}, {-1,2}});
             case ROOK -> directionalMovement(board, myPosition, new int[][] {{-1,0}, {1,0}, {0,1}, {0,-1}});
-            case PAWN -> pawn(board, myPosition);
+            case PAWN -> pawnMove(board, myPosition);
         };
     }
 
@@ -73,19 +73,19 @@ public class ChessPiece {
             int newRow = myPosition.getRow() + offset[0];
             int newCol = myPosition.getColumn() + offset[1];
 
-            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
                 continue;
             }
 
-            ChessPosition possible_space = new ChessPosition(newRow, newCol);
-            ChessPiece inhabitant = board.getPiece(possible_space);
+            ChessPosition possibleSpace = new ChessPosition(newRow, newCol);
+            ChessPiece inhabitant = board.getPiece(possibleSpace);
 
             //I originally had inhabitant == null as the second choice - this was causing errors.
             //Null must be first, because otherwise you cannot call .getTeamColor() on it, and it will fail to compile.
             if (inhabitant == null) {
-                moves.add(new ChessMove(myPosition, possible_space, null));
+                moves.add(new ChessMove(myPosition, possibleSpace, null));
             } else if (inhabitant.getTeamColor() != pieceColor) {
-                moves.add(new ChessMove(myPosition, possible_space, null));
+                moves.add(new ChessMove(myPosition, possibleSpace, null));
             }
         }
         return moves;
@@ -98,7 +98,7 @@ public class ChessPiece {
                 int newRow = myPosition.getRow() + (i*offset[0]);
                 int newCol = myPosition.getColumn() + (i*offset[1]);
 
-                if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {break;}
+                if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {break;}
 
                 ChessPosition possible_space = new ChessPosition(newRow, newCol);
                 ChessPiece inhabitant = board.getPiece(possible_space);
@@ -119,35 +119,35 @@ public class ChessPiece {
         return moves;
     }
 
-    private Collection<ChessMove> pawn(ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> pawnMove(ChessBoard board, ChessPosition myPosition) {
         int startRow;
         int endRow;
-        int[][] normal_offsets;
-        int[][] double_offsets;
-        int[][] attack_offsets;
+        int[][] normalOffsets;
+        int[][] doubleOffsets;
+        int[][] attackOffsets;
 
         if (pieceColor == ChessGame.TeamColor.BLACK) {
             startRow = 7;
             endRow = 1;
-            normal_offsets = new int[][] {{-1,0}};
-            double_offsets = new int[][] {{-1, 0}, {-2, 0}};
-            attack_offsets = new int[][] {{-1, -1}, {-1, 1}};
+            normalOffsets = new int[][] {{-1,0}};
+            doubleOffsets = new int[][] {{-1, 0}, {-2, 0}};
+            attackOffsets = new int[][] {{-1, -1}, {-1, 1}};
         } else {
             startRow = 2;
             endRow = 8;
-            normal_offsets = new int[][] {{1,0}};
-            double_offsets = new int[][] {{1, 0}, {2, 0}};
-            attack_offsets = new int[][] {{1, -1}, {1, 1}};
+            normalOffsets = new int[][] {{1,0}};
+            doubleOffsets = new int[][] {{1, 0}, {2, 0}};
+            attackOffsets = new int[][] {{1, -1}, {1, 1}};
         }
 
         if (startRow == myPosition.getRow()) {
-            return pawnMovements(board, myPosition, double_offsets, attack_offsets, endRow);
+            return pawnMovements(board, myPosition, doubleOffsets, attackOffsets, endRow);
         } else {
-            return pawnMovements(board, myPosition, normal_offsets, attack_offsets, endRow);
+            return pawnMovements(board, myPosition, normalOffsets, attackOffsets, endRow);
         }
     }
 
-    private Collection<ChessMove> pawnMovements(ChessBoard board, ChessPosition myPosition, int[][] offsets, int[][] attack_offsets, int endRow) {
+    private Collection<ChessMove> pawnMovements(ChessBoard board, ChessPosition myPosition, int[][] offsets, int[][] attackOffsets, int endRow) {
         Collection<ChessMove> moves = new ArrayList<>();
         int newRow;
         int newCol;
@@ -156,7 +156,7 @@ public class ChessPiece {
             newRow = myPosition.getRow() + offset[0];
             newCol = myPosition.getColumn() + offset[1];
 
-            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
                 continue;
             }
 
@@ -178,11 +178,11 @@ public class ChessPiece {
             }
         }
 
-        for (int[] attack_offset : attack_offsets) {
-            newRow = myPosition.getRow() + attack_offset[0];
-            newCol = myPosition.getColumn() + attack_offset[1];
+        for (int[] attackOffset : attackOffsets) {
+            newRow = myPosition.getRow() + attackOffset[0];
+            newCol = myPosition.getColumn() + attackOffset[1];
 
-            if (newRow < 1 | newRow > 8 | newCol < 1 | newCol > 8) {
+            if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) {
                 continue;
             }
 
