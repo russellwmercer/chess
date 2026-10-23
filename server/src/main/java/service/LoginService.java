@@ -5,6 +5,8 @@ import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 import model.UserData;
 import model.AuthData;
+import requestresult.LoginRequest;
+import requestresult.LoginResult;
 
 import java.util.UUID;
 

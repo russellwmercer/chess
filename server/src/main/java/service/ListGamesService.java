@@ -3,6 +3,9 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
+import requestresult.ListGamesRequest;
+import requestresult.ListGamesResult;
+
 import java.util.List;
 
 public class ListGamesService {

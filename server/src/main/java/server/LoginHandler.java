@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import io.javalin.http.Context;
+import requestresult.LoginRequest;
+import requestresult.LoginResult;
 import service.*;
 import dataaccess.DataAccessException;
 

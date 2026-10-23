@@ -98,17 +98,25 @@ public class ChessGame {
         Collection<ChessMove> castleMoves = new ArrayList<>();
         if (isInCheck(king.getTeamColor())) {return castleMoves;}
         if (king.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            if (!whiteKingMove && !whiteKingsideRookMove && kingAt(1,5, king.getTeamColor()) && rookAt(1,8, king.getTeamColor()) && pathOpen(1,6, 7) && checkKingPath(1, 6, 7, king.getTeamColor())) {
+            if (!whiteKingMove && !whiteKingsideRookMove && kingAt(1,5, king.getTeamColor()) &&
+                    rookAt(1,8, king.getTeamColor()) && pathOpen(1,6, 7) &&
+                    checkKingPath(1, 6, 7, king.getTeamColor())) {
                 castleMoves.add(new ChessMove(startPosition, new ChessPosition(1, 7), null));
             }
-            if (!whiteKingMove && !whiteQueensideRookMove && kingAt(1,5, king.getTeamColor()) && rookAt(1,1, king.getTeamColor()) && pathOpen(1,2, 4) && checkKingPath(1, 3, 4, king.getTeamColor())) {
+            if (!whiteKingMove && !whiteQueensideRookMove && kingAt(1,5, king.getTeamColor()) &&
+                    rookAt(1,1, king.getTeamColor()) && pathOpen(1,2, 4) &&
+                    checkKingPath(1, 3, 4, king.getTeamColor())) {
                 castleMoves.add(new ChessMove(startPosition, new ChessPosition(1, 3), null));
             }
         } else {
-            if (!blackKingMove && !blackKingsideRookMove && kingAt(8,5, king.getTeamColor()) && rookAt(8,8, king.getTeamColor()) && pathOpen(8,6, 7) && checkKingPath(8, 6, 7, king.getTeamColor())) {
+            if (!blackKingMove && !blackKingsideRookMove && kingAt(8,5, king.getTeamColor()) &&
+                    rookAt(8,8, king.getTeamColor()) && pathOpen(8,6, 7) &&
+                    checkKingPath(8, 6, 7, king.getTeamColor())) {
                 castleMoves.add(new ChessMove(startPosition, new ChessPosition(8, 7), null));
             }
-            if (!blackKingMove && !blackQueensideRookMove && kingAt(8,5, king.getTeamColor()) && rookAt(8,1, king.getTeamColor()) && pathOpen(8,2, 4) && checkKingPath(8, 3, 4, king.getTeamColor())) {
+            if (!blackKingMove && !blackQueensideRookMove && kingAt(8,5, king.getTeamColor()) &&
+                    rookAt(8,1, king.getTeamColor()) && pathOpen(8,2, 4) &&
+                    checkKingPath(8, 3, 4, king.getTeamColor())) {
                 castleMoves.add(new ChessMove(startPosition, new ChessPosition(8, 3), null));
             }
         }
@@ -207,7 +215,8 @@ public class ChessGame {
             throw new InvalidMoveException(move + "is not in the list of valid moves.");
         } else {
             // Logic for enpassant with pawns, specifically.
-            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN && board.getPiece(move.getEndPosition()) == null && move.getEndPosition().getColumn() != move.getStartPosition().getColumn()) {
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN && board.getPiece(move.getEndPosition()) == null &&
+                    move.getEndPosition().getColumn() != move.getStartPosition().getColumn()) {
                 if (movingPiece.getTeamColor() == TeamColor.WHITE) {
                     board.addPiece(new ChessPosition(move.getEndPosition().getRow()-1, move.getEndPosition().getColumn()),null);
                 } else {
@@ -215,7 +224,8 @@ public class ChessGame {
                 }
             }
             //Logic for updating the board after a castle.
-            if (movingPiece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(move.getEndPosition().getColumn() - move.getStartPosition().getColumn()) == 2) {
+            if (movingPiece.getPieceType() == ChessPiece.PieceType.KING &&
+                    Math.abs(move.getEndPosition().getColumn() - move.getStartPosition().getColumn()) == 2) {
                 int homeRow = (movingPiece.getTeamColor() == TeamColor.WHITE) ? 1 : 8;
                 // Kingside castle
                 if (move.getEndPosition().getColumn() == 7) {

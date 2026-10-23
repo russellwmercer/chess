@@ -4,6 +4,8 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
+import requestresult.CreateGameRequest;
+import requestresult.CreateGameResult;
 
 public class CreateGameService {
     private final GameDAO gameDAO;

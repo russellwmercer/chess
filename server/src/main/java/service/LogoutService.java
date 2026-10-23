@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.AuthDAO;
+import requestresult.LogoutRequest;
 
 public class LogoutService {
     private final AuthDAO authDAO;

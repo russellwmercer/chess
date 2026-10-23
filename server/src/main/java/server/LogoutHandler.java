@@ -2,7 +2,7 @@ package server;
 
 import io.javalin.http.Context;
 import service.LogoutService;
-import service.LogoutRequest;
+import requestresult.LogoutRequest;
 import dataaccess.DataAccessException;
 import service.UnauthorizedException;
 

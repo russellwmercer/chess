@@ -212,7 +212,8 @@ public class ChessPiece {
         if (this == o) {return true;}
         if (o == null || this.getClass() != o.getClass()) {return false;}
         ChessPiece other = (ChessPiece) o; // This line tells the compiler that the object passed into the function in this case is a ChessPiece.
-        return (other.getPieceType() == this.getPieceType() && other.getTeamColor() == this.getTeamColor()); // Make sure not to forget one of the object properties.
+        return (other.getPieceType() == this.getPieceType() &&
+                other.getTeamColor() == this.getTeamColor()); // Make sure not to forget one of the object properties.
     }
 
     /**

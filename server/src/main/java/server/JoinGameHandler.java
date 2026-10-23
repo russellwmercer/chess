@@ -3,6 +3,7 @@ package server;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import io.javalin.http.Context;
+import requestresult.JoinGameRequest;
 import service.*;
 import dataaccess.DataAccessException;
 

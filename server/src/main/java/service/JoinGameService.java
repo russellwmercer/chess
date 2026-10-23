@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import requestresult.JoinGameRequest;
 
 public class JoinGameService {
     private final GameDAO gameDAO;
@@ -15,7 +16,8 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) throws BadRequestException, UnauthorizedException, DataAccessException, AlreadyTakenException {
+    public void joinGame(JoinGameRequest joinGameRequest)
+            throws BadRequestException, UnauthorizedException, DataAccessException, AlreadyTakenException {
         // Check for 400 player color doesn't exist or missing game ID
         if (joinGameRequest.playerColor() == null || joinGameRequest.gameID() == null) {
             throw new BadRequestException("bad request");
