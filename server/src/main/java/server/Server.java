@@ -22,9 +22,13 @@ public class Server {
         RegisterService registerService = new RegisterService(userDAO, authDAO);
         RegisterHandler registerHandler = new RegisterHandler(registerService);
 
+        LoginService loginService = new LoginService(userDAO, authDAO);
+        LoginHandler loginHandler = new LoginHandler(loginService);
+
         //Javlin paths
         javalin.post("/user", registerHandler::handle);
         javalin.delete("/db", clearHandler::handle);
+        javalin.post("/session", loginHandler::handle);
 
         //Exceptions - one per exception type.
         javalin.exception(BadRequestException.class, (e, ctx) -> {
