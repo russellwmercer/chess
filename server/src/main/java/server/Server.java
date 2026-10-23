@@ -35,6 +35,9 @@ public class Server {
         CreateGameService createGameService = new CreateGameService(checker, gameDAO);
         CreateGameHandler createGameHandler = new CreateGameHandler(createGameService);
 
+        JoinGameService joinGameService = new JoinGameService(checker, gameDAO);
+        JoinGameHandler joinGameHandler = new JoinGameHandler(joinGameService);
+
         //Javlin paths
         javalin.post("/user", registerHandler::handle);
         javalin.delete("/db", clearHandler::handle);
@@ -42,6 +45,7 @@ public class Server {
         javalin.delete("/session", logoutHandler::handle);
         javalin.get("/game", listGamesHandler::handle);
         javalin.post("/game", createGameHandler::handle);
+        javalin.put("/game", joinGameHandler::handle);
 
         //Exceptions - one per exception type.
         javalin.exception(BadRequestException.class, (e, ctx) -> {
