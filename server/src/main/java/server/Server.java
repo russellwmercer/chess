@@ -25,10 +25,14 @@ public class Server {
         LoginService loginService = new LoginService(userDAO, authDAO);
         LoginHandler loginHandler = new LoginHandler(loginService);
 
+        LogoutService logoutService = new LogoutService(authDAO);
+        LogoutHandler logoutHandler = new LogoutHandler(logoutService);
+
         //Javlin paths
         javalin.post("/user", registerHandler::handle);
         javalin.delete("/db", clearHandler::handle);
         javalin.post("/session", loginHandler::handle);
+        javalin.delete("/session", logoutHandler::handle);
 
         //Exceptions - one per exception type.
         javalin.exception(BadRequestException.class, (e, ctx) -> {
