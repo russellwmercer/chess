@@ -2,7 +2,7 @@ package server;
 
 import dataaccess.*;
 import io.javalin.*;
-import service.ClearService;
+import service.*;
 
 public class Server {
 
@@ -19,7 +19,26 @@ public class Server {
         ClearService clearService = new ClearService(gameDAO, userDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
 
+        RegisterService registerService = new RegisterService(userDAO, authDAO);
+        RegisterHandler registerHandler = new RegisterHandler(registerService);
+
+        //Javlin paths
+        javalin.post("/user", registerHandler::handle);
         javalin.delete("/db", clearHandler::handle);
+
+        //Exceptions - one per exception type.
+        javalin.exception(BadRequestException.class, (e, ctx) -> {
+            ctx.status(400);
+            ctx.result("{\"message\": \"Error: " + e.getMessage() + "\"}");
+        });
+        javalin.exception(AlreadyTakenException.class, (e, ctx) -> {
+            ctx.status(403);
+            ctx.result("{\"message\": \"Error: " + e.getMessage() + "\"}");
+        });
+        javalin.exception(UnauthorizedException.class, (e, ctx) -> {
+            ctx.status(401);
+            ctx.result("{\"message\": \"Error: " + e.getMessage() + "\"}");
+        });
         javalin.exception(DataAccessException.class, (e, ctx) -> {
             ctx.status(500);
             ctx.result("{\"message\": \"Error: " + e.getMessage() + "\"}");
