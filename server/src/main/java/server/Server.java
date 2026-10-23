@@ -29,11 +29,15 @@ public class Server {
         LogoutService logoutService = new LogoutService(checker, authDAO);
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
 
+        ListGamesService listGamesService = new ListGamesService(checker, gameDAO);
+        ListGamesHandler listGamesHandler = new ListGamesHandler(listGamesService);
+
         //Javlin paths
         javalin.post("/user", registerHandler::handle);
         javalin.delete("/db", clearHandler::handle);
         javalin.post("/session", loginHandler::handle);
         javalin.delete("/session", logoutHandler::handle);
+        javalin.get("/game", listGamesHandler::handle);
 
         //Exceptions - one per exception type.
         javalin.exception(BadRequestException.class, (e, ctx) -> {
