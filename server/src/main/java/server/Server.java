@@ -15,6 +15,7 @@ public class Server {
         UserDAO userDAO = new MemoryUserDAO();
         GameDAO gameDAO = new MemoryGameDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
+        AuthChecker checker = new AuthChecker(authDAO);
 
         ClearService clearService = new ClearService(gameDAO, userDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
@@ -25,7 +26,7 @@ public class Server {
         LoginService loginService = new LoginService(userDAO, authDAO);
         LoginHandler loginHandler = new LoginHandler(loginService);
 
-        LogoutService logoutService = new LogoutService(authDAO);
+        LogoutService logoutService = new LogoutService(checker, authDAO);
         LogoutHandler logoutHandler = new LogoutHandler(logoutService);
 
         //Javlin paths
