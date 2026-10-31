@@ -9,17 +9,27 @@ public class DatabaseSetup {
     private static final String[] CREATE_STATEMENTS = {
         """ 
         CREATE TABLE IF NOT EXISTS user (
-            username  varchar(255)  NOT NULL,
-            password  varchar(60)  NOT NULL,
-            email  varchar(255)  NOT NULL,
+            username  VARCHAR(255)  NOT NULL,
+            password  VARCHAR(60)  NOT NULL,
+            email  VARCHAR(255)  NOT NULL,
             PRIMARY KEY (username)
         )
         """,
         """
         CREATE TABLE IF NOT EXISTS auth (
-            authToken varchar(36) NOT NULL,
-            username varchar(255) NOT NULL,
+            authToken  VARCHAR(36)  NOT NULL,
+            username  VARCHAR(255)  NOT NULL,
             PRIMARY KEY (authToken)
+        )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS game (
+            gameID  INT  NOT NULL AUTO_INCREMENT,
+            whiteUsername  VARCHAR(255),
+            blackUsername  VARCHAR(255),
+            gameName  VARCHAR(255)  NOT NULL,
+            game  TEXT  NOT NULL,
+            PRIMARY KEY (gameID)
         )
         """
     };
