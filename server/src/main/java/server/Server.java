@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.*;
+import dataaccess.sql.SqlUserDAO;
 import io.javalin.*;
 import service.*;
 
@@ -12,10 +13,17 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        UserDAO userDAO = new MemoryUserDAO();
+        UserDAO userDAO;
         GameDAO gameDAO = new MemoryGameDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         AuthChecker checker = new AuthChecker(authDAO);
+
+        // SQL needs to be in a try block, since they throw DataAccessExceptions. They need to be caught.
+        try {
+            userDAO = new SqlUserDAO();
+        } catch (DataAccessException ex) {
+            throw new RuntimeException("Error: unable to connect to the database", ex);
+        }
 
         ClearService clearService = new ClearService(gameDAO, userDAO, authDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
