@@ -14,6 +14,13 @@ public class DatabaseSetup {
             email  varchar(255)  NOT NULL,
             PRIMARY KEY (username)
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS auth (
+            authToken varchar(36) NOT NULL,
+            username varchar(255) NOT NULL,
+            PRIMARY KEY (authToken)
+        )
         """
     };
 
