@@ -49,7 +49,7 @@ public class SqlUserDAOTests {
     }
 
     @Test
-    void clearSuccess() throws DataAccessException {
+    void clearUserSuccess() throws DataAccessException {
         userDAO.createUser(new UserData("usernameTest", "passwordTest", "test@test"));
         userDAO.createUser(new UserData("usernameTest2", "passwordTest2", "test2@test"));
         userDAO.clear();
