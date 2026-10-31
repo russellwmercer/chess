@@ -5,6 +5,7 @@ import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 import model.UserData;
 import model.AuthData;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.LoginRequest;
 import requestresult.LoginResult;
 
@@ -32,7 +33,7 @@ public class LoginService {
             throw new UnauthorizedException("unauthorized");
         }
         // Error: the username exists, but the password is incorrect. 401
-        if (!loginRequest.password().equals(user.password())) {
+        if (!BCrypt.checkpw(loginRequest.password(), user.password())) {
             throw new UnauthorizedException("unauthorized");
         }
 

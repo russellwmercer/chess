@@ -8,7 +8,7 @@ public class DatabaseSetup {
 
     private static final String[] CREATE_STATEMENTS = {
         """ 
-        CREATE TABLE IF NOT EXISTS User (
+        CREATE TABLE IF NOT EXISTS user (
             username  varchar(255)  NOT NULL,
             password  varchar(60)  NOT NULL,
             email  varchar(255)  NOT NULL,

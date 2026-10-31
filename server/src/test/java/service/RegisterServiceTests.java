@@ -5,6 +5,7 @@ import dataaccess.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
@@ -36,7 +37,8 @@ public class RegisterServiceTests {
         UserData user = userDAO.getUser("username");
         assertNotNull(user);
         assertEquals("username", user.username());
-        assertEquals("password", user.password());
+        assertNotEquals("password", user.password());
+        assertTrue(BCrypt.checkpw("password", user.password()));
         assertEquals("email", user.email());
 
         assertNotNull(authDAO.getAuth(result.authToken()));

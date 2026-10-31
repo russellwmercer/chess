@@ -6,6 +6,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.LoginRequest;
 import requestresult.LoginResult;
 
@@ -27,7 +28,7 @@ public class LoginServiceTests {
     @Test
     void loginSuccessfully() throws Exception {
         userDAO.createUser(
-                new UserData("username", "password", "email")
+                new UserData("username", BCrypt.hashpw("password", BCrypt.gensalt()), "email")
         );
 
         LoginRequest request = new LoginRequest("username", "password");
@@ -76,7 +77,7 @@ public class LoginServiceTests {
     @Test
     void loginWithIncorrectPasswordThrowsUnauthorizedException() throws Exception {
         userDAO.createUser(
-                new UserData("username", "correctPassword", "email")
+                new UserData("username", BCrypt.hashpw("correctPassword", BCrypt.gensalt()), "email")
         );
 
         LoginRequest request =
