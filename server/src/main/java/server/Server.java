@@ -1,7 +1,9 @@
 package server;
 
 import dataaccess.*;
+import dataaccess.memory.MemoryGameDAO;
 import dataaccess.sql.SqlAuthDAO;
+import dataaccess.sql.SqlGameDAO;
 import dataaccess.sql.SqlUserDAO;
 import io.javalin.*;
 import service.*;
@@ -13,13 +15,14 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
+        // Register endpoints and exception handlers.
         UserDAO userDAO;
-        GameDAO gameDAO = new MemoryGameDAO();
+        GameDAO gameDAO;
         AuthDAO authDAO;
 
         // SQL needs to be in a try block, since they throw DataAccessExceptions. They need to be caught.
         try {
+            gameDAO = new SqlGameDAO();
             userDAO = new SqlUserDAO();
             authDAO = new SqlAuthDAO();
         } catch (DataAccessException ex) {
