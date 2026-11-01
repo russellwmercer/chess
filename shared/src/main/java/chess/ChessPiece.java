@@ -167,12 +167,7 @@ public class ChessPiece {
             if (inhabitant != null) {
                 break;
             } else if (newRow == endRow) {
-                for (ChessPiece.PieceType p : ChessPiece.PieceType.values()) {
-                    if (p == ChessPiece.PieceType.KING | p == ChessPiece.PieceType.PAWN) {
-                        continue;
-                    }
-                    moves.add(new ChessMove(myPosition, possible_space, p));
-                }
+                addPromotionMoves(moves, myPosition, possible_space);
             } else {
                 moves.add(new ChessMove(myPosition, possible_space, null));
             }
@@ -191,12 +186,7 @@ public class ChessPiece {
 
             if (inhabitant == null) {continue;}
             if (inhabitant.getTeamColor() != pieceColor && newRow == endRow) {
-                for (ChessPiece.PieceType p : ChessPiece.PieceType.values()) {
-                    if (p == ChessPiece.PieceType.KING | p == ChessPiece.PieceType.PAWN) {
-                        continue;
-                    }
-                    moves.add(new ChessMove(myPosition, possible_space, p));
-                }
+                addPromotionMoves(moves, myPosition, possible_space);
             } else if (inhabitant.getTeamColor() != pieceColor) {
                 moves.add(new ChessMove(myPosition, possible_space, null));
             }
@@ -204,6 +194,16 @@ public class ChessPiece {
         }
 
         return moves;
+    }
+
+    // An extra helper function as part of removing duplicate code for quality check.
+    private void addPromotionMoves(Collection<ChessMove> moves, ChessPosition myPosition, ChessPosition possibleSpace) {
+        for (ChessPiece.PieceType p : ChessPiece.PieceType.values()) {
+            if (p == ChessPiece.PieceType.KING || p == ChessPiece.PieceType.PAWN) {
+                continue;
+            }
+            moves.add(new ChessMove(myPosition, possibleSpace, p));
+        }
     }
 
     //Below this point are overrides and helper functions for debugging.

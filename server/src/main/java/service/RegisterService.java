@@ -31,7 +31,8 @@ public class RegisterService {
             throw new AlreadyTakenException("already taken");
         }
 
-        userDAO.createUser(new UserData(registerRequest.username(), BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt()), registerRequest.email()));
+        var hash = BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt());
+        userDAO.createUser(new UserData(registerRequest.username(), hash, registerRequest.email()));
 
         String authToken = UUID.randomUUID().toString();
         authDAO.createAuth(new AuthData(authToken, registerRequest.username()));
