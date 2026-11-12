@@ -1,11 +1,12 @@
 package client;
 
 import org.junit.jupiter.api.*;
-import requestresult.RegisterRequest;
-import requestresult.RegisterResult;
+import requestresult.*;
 import server.Server;
 import serverfacade.ServerFacade;
 import serverfacade.ServerFacadeException;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ServerFacadeTests {
 
@@ -47,7 +48,7 @@ public class ServerFacadeTests {
         RegisterResult result = facade.register(new RegisterRequest("Username",
                 "password", "email@test.com"));
 
-        Assertions.assertEquals(result.username(), "Username");
+        Assertions.assertEquals("Username", result.username());
         Assertions.assertNotNull(result.authToken());
     }
 
@@ -58,5 +59,36 @@ public class ServerFacadeTests {
 
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.register(
                 new RegisterRequest("Username", "password", "email@test.com")));
+    }
+
+    @Test
+    public void loginPositive() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        LoginResult result = facade.login(new LoginRequest("Username","password"));
+
+        Assertions.assertEquals("Username", result.username());
+        Assertions.assertNotNull(result.authToken());
+        Assertions.assertFalse(result.authToken().isEmpty());
+    }
+
+    @Test
+    public void loginNegativeWrongPassword() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+
+        ServerFacadeException e = Assertions.assertThrows(ServerFacadeException.class, () -> facade.login(
+                new LoginRequest("Username","passwordAHH")));
+        Assertions.assertEquals("Wrong username or password.", e.getMessage());
+    }
+
+    @Test
+    public void loginNegativeUsernameDNE() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+
+        ServerFacadeException e = Assertions.assertThrows(ServerFacadeException.class, () -> facade.login(
+                new LoginRequest("UsernameAhhh","password")));
+        Assertions.assertEquals("Wrong username or password.", e.getMessage());
     }
 }

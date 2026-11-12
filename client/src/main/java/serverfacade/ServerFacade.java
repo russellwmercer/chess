@@ -1,6 +1,8 @@
 package serverfacade;
 
 import com.google.gson.Gson;
+import requestresult.LoginRequest;
+import requestresult.LoginResult;
 import requestresult.RegisterRequest;
 import requestresult.RegisterResult;
 
@@ -29,6 +31,12 @@ public class ServerFacade {
         String body = sendRequest("POST", "/user",
                 request, null, "That username is already taken.", null);
         return gson.fromJson(body, RegisterResult.class);
+    }
+
+    public LoginResult login(LoginRequest request) throws ServerFacadeException {
+        String body = sendRequest("POST", "/session",
+                request, null, null, "Wrong username or password.");
+        return gson.fromJson(body, LoginResult.class);
     }
 
     //Helper: Sends any request; returns the response body as a string or throws an error
