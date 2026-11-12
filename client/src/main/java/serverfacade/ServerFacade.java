@@ -22,17 +22,7 @@ public class ServerFacade {
     }
 
     public void clear() throws ServerFacadeException {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + "/db"))
-                .DELETE()
-                .build();
-        try {
-            HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) {
-                throw new ServerFacadeException("Could not clear.");
-            }
-        } catch (IOException | InterruptedException e) {
-            throw new ServerFacadeException("Could not reach the server.");
-        }
+        sendRequest("DELETE", "/db", null, null,null,null);
     }
 
     public RegisterResult register(RegisterRequest request) throws ServerFacadeException {
