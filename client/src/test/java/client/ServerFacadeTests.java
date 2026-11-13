@@ -36,6 +36,19 @@ public class ServerFacadeTests {
 //        Assertions.assertTrue(true);
 //    }
 
+    @Test void registerNegativeServerDown() {
+        Server deadServer = new Server();
+        int deadPort = deadServer.run(0);
+        deadServer.stop();
+
+        ServerFacade offline = new ServerFacade(deadPort);
+
+        ServerFacadeException e = Assertions.assertThrows(ServerFacadeException.class,
+                () -> offline.register(new RegisterRequest("Test", "password",
+                        "bademail@email.com")));
+        Assertions.assertEquals("Could not reach the server.", e.getMessage());
+    }
+
     @Test
     public void clearPositive() {
         //I keep forgetting this notation: This is a lambda. It gives no data () and instead tells it to do facade.clear().
