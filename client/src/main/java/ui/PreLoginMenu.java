@@ -23,10 +23,11 @@ public class PreLoginMenu {
     }
 
     private void printHelp() {
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Here are the available commands:"
-                + EscapeSequences.SET_TEXT_COLOR_YELLOW);
-        System.out.println("register <username> <password> <email> - creates an account");
-        System.out.println("login <username> <password> - logs in to the server");
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Since you are in the"
+                + EscapeSequences.SET_TEXT_COLOR_WHITE + " PRELOGIN " + EscapeSequences.SET_TEXT_COLOR_BLUE
+                + "state, here are the available commands:" + EscapeSequences.SET_TEXT_COLOR_YELLOW);
+        System.out.println("register <USERNAME> <PASSWORD> <EMAIL> - creates an account");
+        System.out.println("login <USERNAME> <PASSWORD> - logs in to the server");
         System.out.println("help - displays available commands");
         System.out.println("quit - closes the menu");
     }
