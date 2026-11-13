@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import requestresult.*;
 import server.Server;
@@ -98,7 +99,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logoutNegativeNotLoggedIn() throws ServerFacadeException {
+    public void logoutNegativeNotLoggedIn() {
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.logout());
     }
 
@@ -113,7 +114,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGameNegative() throws ServerFacadeException {
+    public void createGameNegative() {
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.createGame("gameNameTest"));
     }
 
@@ -135,8 +136,56 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGamesNegative() throws ServerFacadeException {
+    public void listGamesNegative() {
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.listGames());
+    }
+
+    @Test
+    public void joinGamePositive() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        CreateGameResult result = facade.createGame("gameNameTest");
+        int gameID = result.gameID();
+
+        Assertions.assertDoesNotThrow(() -> facade.joinGame(ChessGame.TeamColor.WHITE, gameID));
+
+        ListGamesResult listResult = facade.listGames();
+
+        Assertions.assertEquals("Username", listResult.games().getFirst().whiteUsername());
+        Assertions.assertNull(listResult.games().getFirst().blackUsername());
+    }
+
+    @Test
+    public void joinGameNegativeNotLoggedIn() {
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.joinGame(ChessGame.TeamColor.WHITE, 1000));
+    }
+
+    @Test
+    public void joinGameNegativeColorTaken() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+            "password", "email@test.com"));
+        CreateGameResult result = facade.createGame("gameNameTest");
+        int gameID = result.gameID();
+
+        Assertions.assertDoesNotThrow(() -> facade.joinGame(ChessGame.TeamColor.WHITE, gameID));
+
+        ListGamesResult listResult = facade.listGames();
+
+        Assertions.assertEquals("Username", listResult.games().getFirst().whiteUsername());
+        Assertions.assertNull(listResult.games().getFirst().blackUsername());
+
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.joinGame(ChessGame.TeamColor.WHITE, gameID));
+    }
+
+    @Test
+    public void joinGameNegativeGameDNE() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        CreateGameResult result = facade.createGame("gameNameTest");
+        int gameID = result.gameID();
+
+        Assertions.assertDoesNotThrow(() -> facade.joinGame(ChessGame.TeamColor.WHITE, gameID));
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.joinGame(ChessGame.TeamColor.WHITE, 9999));
     }
 
 }

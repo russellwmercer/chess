@@ -1,5 +1,6 @@
 package serverfacade;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import requestresult.*;
 
@@ -37,7 +38,8 @@ public class ServerFacade {
     // Passes in a game name beacuse the ServerFacade is the only thing that has access to the Token.
     // It must build the CreateGameRequest locally.
     public CreateGameResult createGame(String gameName) throws ServerFacadeException {
-        CreateGameRequest request = new CreateGameRequest(authToken, gameName);
+        // I create JoinGameRequest with null because it is expected in the header, not the body.
+        CreateGameRequest request = new CreateGameRequest(null, gameName);
         String body = sendRequest ("POST", "/game", request, authToken, null, null);
         return gson.fromJson(body, CreateGameResult.class);
     }
@@ -45,6 +47,12 @@ public class ServerFacade {
     public ListGamesResult listGames() throws ServerFacadeException {
         String body = sendRequest ("GET", "/game", null, authToken, null, null);
         return gson.fromJson(body, ListGamesResult.class);
+    }
+
+    public void joinGame(ChessGame.TeamColor color, int gameID) throws ServerFacadeException {
+        // I create JoinGameRequest with null because it is expected in the header, not the body.
+        JoinGameRequest request = new JoinGameRequest(null, color, gameID);
+        sendRequest("PUT", "/game", request, authToken, "Color taken.", null);
     }
 
     public LoginResult login(LoginRequest request) throws ServerFacadeException {
