@@ -15,14 +15,14 @@ public class PostLoginMenu {
         this.facade = facade;
     }
 
-    // Handles any ostlogin command and then chooses the right helper func.
+    // Handles any postlogin command and then chooses the right helper func.
     public ClientStateEnum handle(String command, String[] words) {
         switch (command) {
             case "help" -> printHelp();
-            case "create" -> {return createMenu(words);}
+            case "create" -> createMenu(words);
             case "list" -> listMenu();
             case "join" -> joinMenu(words);
-            case "observe" -> {return observeMenu(words);}
+            case "observe" -> observeMenu(words);
             case "logout" -> {return logoutMenu();}
             default -> System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Unknown command." +
                     " Type help to see options." + EscapeSequences.SET_TEXT_COLOR_YELLOW);
@@ -38,6 +38,25 @@ public class PostLoginMenu {
         } catch (ServerFacadeException e) {
             System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + e.getMessage());
             return ClientStateEnum.POSTLOGIN; // If it fails they're still logged in.
+        }
+    }
+
+    // The project doesnt really specify if we want it to be a one word name, so I decided Id' try to make it functional for longer
+    private void createMenu(String[] words) {
+        if (words.length < 2) {
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Usage: create <GAME NAME>");
+            return;
+        }
+        String gameName = words[1];
+        for (int i = 2; i < words.length; i++) {
+            gameName = gameName + " " + words[i];
+        }
+        try {
+            facade.createGame(gameName);
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "Created game " +
+                    EscapeSequences.SET_TEXT_COLOR_YELLOW + gameName);
+        } catch (ServerFacadeException e) {
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + e.getMessage());
         }
     }
 
@@ -94,6 +113,22 @@ public class PostLoginMenu {
         }
     }
 
+    private void observeMenu(String[] words) {
+        if (words.length != 2) {
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Usage: observe <NUMBER>");
+            return;
+        }
+        GameData game = gameDataFromNumber(words[1]);
+        if (game == null) {
+            return;
+        }
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "Observing game " +
+                EscapeSequences.SET_TEXT_COLOR_YELLOW + game.gameName() +
+                EscapeSequences.SET_TEXT_COLOR_GREEN + " with players " + EscapeSequences.SET_TEXT_COLOR_YELLOW
+                + userOrEmptyString(game.whiteUsername()) + " (White)" + EscapeSequences.SET_TEXT_COLOR_GREEN + " and " +
+                EscapeSequences.SET_TEXT_COLOR_YELLOW + userOrEmptyString(game.blackUsername()) + " (Black)");
+    }
+
     private void joinMenu(String[] words) {
         if (words.length != 3) {
             System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "Usage: join <NUMBER> <WHITE|BLACK>");
@@ -125,7 +160,7 @@ public class PostLoginMenu {
         System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Since you are in the"
                 + EscapeSequences.SET_TEXT_COLOR_WHITE + " POSTLOGIN " + EscapeSequences.SET_TEXT_COLOR_BLUE
                 + "state, here are the available commands:" + EscapeSequences.SET_TEXT_COLOR_YELLOW);
-        System.out.println("create <NAME> - Creates a chess game under a new name");
+        System.out.println("create <GAME NAME> - Creates a chess game under a new name");
         System.out.println("list - list the active games in order of number");
         System.out.println("join <NUMBER> <WHITE|BLACK> - join an active game");
         System.out.println("observe <NUMBER> - watch an active game");
