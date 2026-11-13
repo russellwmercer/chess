@@ -55,6 +55,7 @@ public class PostLoginMenu {
             facade.createGame(gameName);
             System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "Created game " +
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + gameName);
+            listGames = new ArrayList<>(facade.listGames().games());
         } catch (ServerFacadeException e) {
             System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + e.getMessage());
         }
@@ -127,6 +128,8 @@ public class PostLoginMenu {
                 EscapeSequences.SET_TEXT_COLOR_GREEN + " with players " + EscapeSequences.SET_TEXT_COLOR_YELLOW
                 + userOrEmptyString(game.whiteUsername()) + " (White)" + EscapeSequences.SET_TEXT_COLOR_GREEN + " and " +
                 EscapeSequences.SET_TEXT_COLOR_YELLOW + userOrEmptyString(game.blackUsername()) + " (Black)");
+        InGameUI gameUI = new InGameUI(game.game().getBoard(), ChessGame.TeamColor.WHITE);
+        gameUI.drawBoard();
     }
 
     private void joinMenu(String[] words) {
@@ -144,13 +147,14 @@ public class PostLoginMenu {
                     " 'w', 'black', or 'b'.");
             return;
         }
-
         try {
             facade.joinGame(color, game.gameID());
             System.out.println(EscapeSequences.SET_TEXT_COLOR_GREEN + "Joined game " +
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + game.gameName() +
                     EscapeSequences.SET_TEXT_COLOR_GREEN + " as " + EscapeSequences.SET_TEXT_COLOR_YELLOW
                     + color);
+            InGameUI gameUI = new InGameUI(game.game().getBoard(), color);
+            gameUI.drawBoard();
         } catch (ServerFacadeException e) {
             System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + e.getMessage());
         }
@@ -166,5 +170,11 @@ public class PostLoginMenu {
         System.out.println("observe <NUMBER> - watch an active game");
         System.out.println("help - displays available commands");
         System.out.println("logout - logs out of the Chess server");
+    }
+
+    public void updateGamesList() {
+        try {
+            listGames = new ArrayList<>(facade.listGames().games());
+        } catch (ServerFacadeException e) {} //Fight! Do nothing. Win :)
     }
 }

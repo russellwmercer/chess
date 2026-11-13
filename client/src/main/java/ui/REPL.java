@@ -14,7 +14,6 @@ public class REPL {
         facade = new ServerFacade(port);
         preLoginMenu = new PreLoginMenu(facade);
         postLoginMenu = new PostLoginMenu(facade);
-
     }
 
     public void run() {
@@ -31,10 +30,15 @@ public class REPL {
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "Leaving the chess client...");
                 break;
             }
+            ClientStateEnum before = state; // Saves the state before it handles.
             state = switch (state) {
                 case PRELOGIN -> preLoginMenu.handle(command, words);
                 case POSTLOGIN -> postLoginMenu.handle(command, words);
             };
+
+            if (before == ClientStateEnum.PRELOGIN && state == ClientStateEnum.POSTLOGIN) {
+                postLoginMenu.updateGamesList();
+            }
         }
     }
 }
