@@ -6,8 +6,6 @@ import server.Server;
 import serverfacade.ServerFacade;
 import serverfacade.ServerFacadeException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 public class ServerFacadeTests {
 
     private static Server server;
@@ -44,7 +42,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void addUserPositive() throws ServerFacadeException {
+    public void registerPositive() throws ServerFacadeException {
         RegisterResult result = facade.register(new RegisterRequest("Username",
                 "password", "email@test.com"));
 
@@ -53,7 +51,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void addUserNegative() throws ServerFacadeException {
+    public void registerNegative() throws ServerFacadeException {
         facade.register(new RegisterRequest("Username",
                 "password", "email@test.com"));
 
@@ -91,4 +89,18 @@ public class ServerFacadeTests {
                 new LoginRequest("UsernameAhhh","password")));
         Assertions.assertEquals("Wrong username or password.", e.getMessage());
     }
+
+    @Test
+    public void logoutPositive() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        Assertions.assertDoesNotThrow(() -> facade.logout());
+    }
+
+    @Test
+    public void logoutNegativeNotLoggedIn() throws ServerFacadeException {
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.logout());
+    }
+
+
 }
