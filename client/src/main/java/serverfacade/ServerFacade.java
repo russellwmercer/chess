@@ -23,6 +23,7 @@ public class ServerFacade {
 
     public void clear() throws ServerFacadeException {
         sendRequest("DELETE", "/db", null, null,null,null);
+        authToken = null;
     }
 
     public RegisterResult register(RegisterRequest request) throws ServerFacadeException {
