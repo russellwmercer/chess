@@ -34,6 +34,14 @@ public class ServerFacade {
         return result;
     }
 
+    // Passes in a game name beacuse the ServerFacade is the only thing that has access to the Token.
+    // It must build the CreateGameRequest locally.
+    public CreateGameResult createGame(String gameName) throws ServerFacadeException {
+        CreateGameRequest request = new CreateGameRequest(authToken, gameName);
+        String body = sendRequest ("POST", "/game", request, authToken, null, null);
+        return gson.fromJson(body, CreateGameResult.class);
+    }
+
     public LoginResult login(LoginRequest request) throws ServerFacadeException {
         String body = sendRequest("POST", "/session",
                 request, null, null, "Wrong username or password.");

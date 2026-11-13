@@ -102,5 +102,20 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.logout());
     }
 
+    @Test
+    public void createGamePositive() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        CreateGameResult result = facade.createGame("gameNameTest");
+
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.gameID() >= 0);
+    }
+
+    @Test
+    public void createGameNegative() throws ServerFacadeException {
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.createGame("gameNameTest"));
+    }
+
 
 }
