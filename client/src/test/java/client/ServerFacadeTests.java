@@ -117,5 +117,26 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ServerFacadeException.class, () -> facade.createGame("gameNameTest"));
     }
 
+    @Test
+    public void listGamesPositive() throws ServerFacadeException {
+        facade.register(new RegisterRequest("Username",
+                "password", "email@test.com"));
+        facade.createGame("gameNameTest");
+        CreateGameResult createGameResult2 = facade.createGame("gameNameTest2");
+        ListGamesResult result = facade.listGames();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.games().size());
+        Assertions.assertEquals("gameNameTest", result.games().getFirst().gameName());
+        Assertions.assertEquals("gameNameTest2", result.games().get(1).gameName());
+        Assertions.assertNull(result.games().getFirst().whiteUsername());
+        Assertions.assertNull(result.games().getFirst().blackUsername());
+        Assertions.assertEquals(createGameResult2.gameID(), result.games().get(1).gameID());
+    }
+
+    @Test
+    public void listGamesNegative() throws ServerFacadeException {
+        Assertions.assertThrows(ServerFacadeException.class, () -> facade.listGames());
+    }
 
 }

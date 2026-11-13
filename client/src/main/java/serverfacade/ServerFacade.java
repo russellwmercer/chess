@@ -42,6 +42,11 @@ public class ServerFacade {
         return gson.fromJson(body, CreateGameResult.class);
     }
 
+    public ListGamesResult listGames() throws ServerFacadeException {
+        String body = sendRequest ("GET", "/game", null, authToken, null, null);
+        return gson.fromJson(body, ListGamesResult.class);
+    }
+
     public LoginResult login(LoginRequest request) throws ServerFacadeException {
         String body = sendRequest("POST", "/session",
                 request, null, null, "Wrong username or password.");
