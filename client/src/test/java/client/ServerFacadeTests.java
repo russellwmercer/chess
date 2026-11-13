@@ -30,12 +30,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-    // Commented this out because it has been replaced by new tests.
-//    @Test
-//    public void sampleTest() {
-//        Assertions.assertTrue(true);
-//    }
-
     @Test void registerNegativeServerDown() {
         Server deadServer = new Server();
         int deadPort = deadServer.run(0);
